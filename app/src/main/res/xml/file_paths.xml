@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!--
+        Autorizza il FileProvider a condividere file dalla directory Pictures
+        dentro getExternalFilesDir(), che è persistente e non viene svuotata
+        dal sistema in caso di spazio insufficiente (a differenza di cacheDir).
+        Questa configurazione è necessaria per passare un URI sicuro all'intent
+        della fotocamera tramite ActivityResultContracts.TakePicture().
+    -->
+    <external-files-path name="sessions-images" path="Pictures/" />
+</paths>
