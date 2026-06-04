@@ -3,8 +3,6 @@ package com.unibo.parkmate.viewmodel
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -20,8 +18,10 @@ import com.unibo.parkmate.repository.ParkMateRepository
 import com.unibo.parkmate.services.OngoingParkingWorker
 import com.unibo.parkmate.services.BASE_ID_HOURLY
 import com.unibo.parkmate.ui.theme.ThemePreferences
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -295,8 +295,11 @@ class ParkMateViewModel(
     }
 
     // Stato per richiedere alla UI di aprire la schermata "Nuova Sosta"
-    var pendingGeofenceZone by androidx.compose.runtime.mutableStateOf<String?>(null)
-
+    private val _pendingGeofenceZone = MutableStateFlow<String?>(null)
+    val pendingGeofenceZone: StateFlow<String?> = _pendingGeofenceZone.asStateFlow()
+    fun setPendingGeofenceZone(zone: String?) {
+        _pendingGeofenceZone.value = zone
+    }
     /**
      * Interrompe tutte le soste attive che cadono geometricamente
      * all'interno del raggio della zona specificata.

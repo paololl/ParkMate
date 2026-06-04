@@ -131,7 +131,7 @@ fun HistoryScreen(
 
             // GESTIONE DELLE TRANSIZIONI DI STATO:
             // Crossfade fluidifica il cambio di contesto grafico generato dai filtri
-            Crossfade(targetState = filteredSessions, label = "lista_filtrata") { sessions ->
+            Crossfade(targetState = filteredSessions, label = "filtered-list") { sessions ->
                 if (sessions.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -140,7 +140,7 @@ fun HistoryScreen(
                         Text(
                             text = if (pastSessions.isEmpty()) "NO ARCHIVED SESSIONS FOUND" else "NO MATCHES FOR PROTOCOL: $selectedFilter",
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest
                         )
                     }
                 } else {
@@ -155,7 +155,7 @@ fun HistoryScreen(
                         items(sessions) { session ->
 
                             val vehicle = vehicles.find { it.id == session.vehicleId }
-                            val vehicleName = vehicle?.name?.uppercase(Locale.getDefault()) ?: "VEICOLO ID: ${session.vehicleId}"
+                            val vehicleName = vehicle?.name?.uppercase(Locale.getDefault()) ?: "VEHICLE ID: ${session.vehicleId}"
 
                             // Estrazione a costo computazionale nullo dal dizionario pre-computato
                             val matchedLocation = locationDictionary[session]
@@ -175,7 +175,7 @@ fun HistoryScreen(
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RectangleShape,
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest)
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
                                     Row(
@@ -197,7 +197,7 @@ fun HistoryScreen(
                                     }
 
                                     Spacer(modifier = Modifier.height(12.dp))
-                                    HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.2f))
                                     Spacer(modifier = Modifier.height(12.dp))
 
                                     Text(text = "LOC: $locationDisplay", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
@@ -257,11 +257,11 @@ fun HistoryScreen(
                                         Spacer(modifier = Modifier.height(4.dp))
                                         AsyncImage(
                                             model = session.photoPath,
-                                            contentDescription = "Foto della sosta",
+                                            contentDescription = "Parking session photo",
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .height(180.dp)
-                                                .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f), RectangleShape)
+                                                .border(1.dp, MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f), RectangleShape)
                                                 .clip(RectangleShape),
                                             contentScale = ContentScale.Crop
                                         )

@@ -112,7 +112,7 @@ fun LocationListScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RectangleShape,
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Row(
@@ -131,7 +131,7 @@ fun LocationListScreen(
                                     Icon(
                                         Icons.Default.Edit,
                                         contentDescription = "Edit location",
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        tint = MaterialTheme.colorScheme.surfaceContainerHighest
                                     )
                                 }
                                 // Delete button
@@ -145,7 +145,7 @@ fun LocationListScreen(
                             }
 
                             Spacer(modifier = Modifier.height(8.dp))
-                            HorizontalDivider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f))
+                            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f))
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Text(

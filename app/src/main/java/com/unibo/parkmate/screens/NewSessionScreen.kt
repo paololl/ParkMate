@@ -122,7 +122,7 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
                         priceInput = detectedGeofence!!.defaultCost?.toString() ?: ""
                     }
                 } else {
-                    Toast.makeText(context, "Impossibile ottenere il fix GPS", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Unable to obtain GPS fix", Toast.LENGTH_SHORT).show()
                 }
                 isFetchingLocation = false
             }
@@ -190,7 +190,7 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             if (availableVehicles.isEmpty()) {
-                Text("NESSUN VEICOLO NEL DATABASE.", color = MaterialTheme.colorScheme.error)
+                Text("NO VEHICLES FOUND IN DATABASE.", color = MaterialTheme.colorScheme.error)
                 return@Scaffold
             }
 
@@ -297,7 +297,7 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
                     Text(
                         "TAP ON THE MAP TO SET COORDINATES",
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest
                     )
                     Box(
                         modifier = Modifier

@@ -78,19 +78,16 @@ class OngoingParkingWorker(
         notificationManager.notify(BASE_ID_HOURLY + vehicleId, notification)
 
         // 4. INNESCO AUTOMATICO DEL PROSSIMO CONTROLLO (FISSO A 5 MINUTI)
-        val workManager = WorkManager.getInstance(context)
-        val nextInputData = Data.Builder().putInt("VEHICLE_ID", vehicleId).build()
 
-        val nextWorkRequest = OneTimeWorkRequestBuilder<OngoingParkingWorker>()
+        val request = OneTimeWorkRequestBuilder<OngoingParkingWorker>()
             .setInitialDelay(5, TimeUnit.MINUTES)
-            .setInputData(nextInputData)
             .addTag("HOURLY_${vehicleId}")
             .build()
 
-        workManager.enqueueUniqueWork(
-            "HOURLY_JOB_${vehicleId}",
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "ONGOING_${vehicleId}",
             ExistingWorkPolicy.REPLACE,
-            nextWorkRequest
+            request
         )
 
         return Result.success()
@@ -142,8 +139,8 @@ class ExpiryParkingWorker(context: Context, params: WorkerParameters) : Coroutin
         // anche quando il dispositivo è in modalità risparmio energetico.
         val notification = NotificationCompat.Builder(applicationContext, "PARKMATE_ALERTS")
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
-            .setContentTitle("⚠️ TICKET SCADUTO!")
-            .setContentText("La sosta per $vehicleName è stata chiusa automaticamente.")
+            .setContentTitle("⚠️ TICKET EXPIRED!")
+            .setContentText("Parking for $vehicleName has been closed automatically.")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()
@@ -182,9 +179,9 @@ class WarningParkingWorker(context: Context, params: WorkerParameters) : Corouti
 
         val notification = NotificationCompat.Builder(applicationContext, "PARKMATE_ALERTS")
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
-            .setContentTitle("⏳ TICKET IN SCADENZA: $vehicleName")
+            .setContentTitle("⏳ TICKET EXPIRING: $vehicleName")
             // Mostriamo i minuti rimanenti reali invece di un generico "pochi minuti"
-            .setContentText("Scadenza tra circa $minutiRimanenti min. Sposta il veicolo!")
+            .setContentText("Expiring in about $minutiRimanenti min. Move the vehicle!")
             .setPriority(NotificationCompat.PRIORITY_HIGH) // Priorità alta per far comparire il banner immediatamente
             .setAutoCancel(true)
             .build()

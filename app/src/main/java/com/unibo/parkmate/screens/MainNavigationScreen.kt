@@ -86,13 +86,11 @@ fun MainNavigationScreen(viewModel: ParkMateViewModel) {
     // traducendola in una navigazione reattiva dichiarativa all'interno di Compose.
     val pendingZone = viewModel.pendingGeofenceZone
     LaunchedEffect(pendingZone) {
-        if (pendingZone != null) {
-            // Quando scatta la notifica, il router sposta l'utente sulla nuova sosta
-            navController.navigate(Screen.NewSession.route)
+        // Quando scatta la notifica, il router sposta l'utente sulla nuova sosta
+        navController.navigate(Screen.NewSession.route)
 
-            // Disinneschiamo il comando per evitare che ripeta il salto se ruoti lo schermo (Idempotenza)
-            viewModel.pendingGeofenceZone = null
-        }
+        // Disinneschiamo il comando per evitare che ripeta il salto se ruoti lo schermo (Idempotenza)
+        viewModel.setPendingGeofenceZone(null)
     }
 
     // Gestori dello stato del menù a tendina
@@ -117,7 +115,7 @@ fun MainNavigationScreen(viewModel: ParkMateViewModel) {
         drawerContent = {
             ModalDrawerSheet(
                 drawerShape = RectangleShape, // Design squadrato hi-tech
-                drawerContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                drawerContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                 modifier = Modifier.width(300.dp) // Larghezza del menù
             ) {
 
@@ -134,8 +132,8 @@ fun MainNavigationScreen(viewModel: ParkMateViewModel) {
                             selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                             selectedIconColor = MaterialTheme.colorScheme.primary,
                             selectedTextColor = MaterialTheme.colorScheme.primary,
-                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            unselectedIconColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                            unselectedTextColor = MaterialTheme.colorScheme.surfaceContainerHighest
                         ),
                         onClick = {
                             // Chiudiamo il menù dopo aver cliccato
@@ -184,7 +182,7 @@ fun MainNavigationScreen(viewModel: ParkMateViewModel) {
                             text = if (isDarkMode) "Dark Theme" else "Light Theme",
                             style = MaterialTheme.typography.bodyMedium,
                             fontFamily = FontFamily.Monospace,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest
                         )
                     }
                     Switch(
@@ -195,7 +193,7 @@ fun MainNavigationScreen(viewModel: ParkMateViewModel) {
                             checkedThumbColor  = MaterialTheme.colorScheme.primary,
                             checkedTrackColor  = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
                             uncheckedThumbColor = MaterialTheme.colorScheme.outline,
-                            uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                            uncheckedTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest
                         )
                     )
                 }

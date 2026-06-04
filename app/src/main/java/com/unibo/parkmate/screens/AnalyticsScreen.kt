@@ -143,7 +143,7 @@ fun AnalyticsScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RectangleShape,
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text("COST EXPENDITURE ANALYSIS", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
@@ -202,7 +202,7 @@ fun AnalyticsScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RectangleShape,
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text("GEO-TEMPORAL HEATMAP", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)

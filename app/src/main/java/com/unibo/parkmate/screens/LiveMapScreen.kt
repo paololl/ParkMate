@@ -228,7 +228,7 @@ fun LiveMapScreen(
             ) {
                 selectedSession?.let { session ->
                     val inspectedVehicle = vehicles.find { it.id == session.vehicleId }
-                    val vehicleName = inspectedVehicle?.name?.uppercase(Locale.getDefault()) ?: "VEICOLO ID: ${session.vehicleId}"
+                    val vehicleName = inspectedVehicle?.name?.uppercase(Locale.getDefault()) ?: "VEHICLE ID: ${session.vehicleId}"
                     val type = session.parkType.trim().lowercase(LocalLocale.current.platformLocale)
 
                     // Usiamo `currentTime` (aggiornato ogni secondo dal ticker LaunchedEffect)

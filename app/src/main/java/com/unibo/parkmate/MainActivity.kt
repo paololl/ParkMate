@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import com.unibo.parkmate.repository.ParkMateRepository
 import com.unibo.parkmate.screens.MainNavigationScreen
 import com.unibo.parkmate.viewmodel.ParkMateViewModel
 import com.unibo.parkmate.viewmodel.ParkMateViewModelFactory
@@ -51,9 +50,9 @@ class MainActivity : ComponentActivity() {
         // --- CANALI DI NOTIFICA (obbligatori da Android 8+) ---
         val channel = android.app.NotificationChannel(
             "PARKMATE_ALERTS",
-            "Avvisi ParkMate",
+            "ParkMate Alerts",
             android.app.NotificationManager.IMPORTANCE_HIGH
-        ).apply { description = "Notifiche per scadenze tariffarie e soste attive" }
+        ).apply { description = "Notifications for tariff expirations and active parking sessions" }
         val notificationManager =
             getSystemService(NOTIFICATION_SERVICE) as android.app.NotificationManager
         notificationManager.createNotificationChannel(channel)
@@ -117,7 +116,7 @@ class MainActivity : ComponentActivity() {
         val zoneName = intent.getStringExtra("LOCATION_NAME") ?: return
         when (action) {
             "ACTION_STOP_PARK" -> viewModel.stopParkingInZone(zoneName, this)
-            "ACTION_START_PARK" -> viewModel.pendingGeofenceZone = zoneName
+            "ACTION_START_PARK" -> viewModel.setPendingGeofenceZone(zoneName)
         }
     }
 }

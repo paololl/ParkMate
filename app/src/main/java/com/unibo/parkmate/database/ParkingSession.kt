@@ -36,7 +36,6 @@ data class ParkingSession(
     val latitude: Double,
     val longitude: Double,
     val hourlyRate: Double? = null,
-    // RIMOSSA: val fixedCost: Double? = null (Dead code eliminato)
     val notes: String? = null,
     val photoPath: String? = null
 )
