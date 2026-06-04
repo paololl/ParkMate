@@ -131,7 +131,7 @@ fun LocationListScreen(
                                     Icon(
                                         Icons.Default.Edit,
                                         contentDescription = "Edit location",
-                                        tint = MaterialTheme.colorScheme.surfaceContainerHighest
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                                 // Delete button

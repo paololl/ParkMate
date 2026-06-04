@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 /**
  * Entità Room che modella la tabella "parking_sessions", rappresentando lo storico dei log operativi.
  * L'architettura rispetta la Terza Forma Normale (3NF) applicando vincoli di integrità referenziale.
- * * @property foreignKeys Vincolo di Foreign Key verso l'entità [Vehicle].
+ * @property foreignKeys Vincolo di Foreign Key verso l'entità [Vehicle].
  * L'opzione [ForeignKey.CASCADE] garantisce che l'eliminazione di un veicolo
  * propaghi la distruzione dei relativi record di sosta, prevenendo dati orfani.
  * @property indices Creazione di un indice B-Tree su "vehicleId" per ottimizzare

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.unibo.parkmate.database.ParkingSession
 import com.unibo.parkmate.viewmodel.ParkMateViewModel
-import com.unibo.parkmate.database.calculateTotalCost // <-- IMPORT
+import com.unibo.parkmate.database.calculateTotalCost
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView

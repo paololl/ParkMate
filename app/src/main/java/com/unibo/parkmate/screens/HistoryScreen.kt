@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.unibo.parkmate.viewmodel.ParkMateViewModel
-import com.unibo.parkmate.database.calculateTotalCost // <-- IMPORT FONDAMENTALE AGGIUNTO
+import com.unibo.parkmate.database.calculateTotalCost
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -140,7 +140,7 @@ fun HistoryScreen(
                         Text(
                             text = if (pastSessions.isEmpty()) "NO ARCHIVED SESSIONS FOUND" else "NO MATCHES FOR PROTOCOL: $selectedFilter",
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.surfaceContainerHighest
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 } else {

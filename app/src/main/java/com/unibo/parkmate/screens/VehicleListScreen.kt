@@ -262,7 +262,7 @@ fun VehicleCard(
                     }
                 }
 
-                IconButton(onClick = { onEdit(vehicle) }) { Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = MaterialTheme.colorScheme.surfaceContainerHighest) }
+                IconButton(onClick = { onEdit(vehicle) }) { Icon(Icons.Filled.Edit, contentDescription = "Edit", tint = MaterialTheme.colorScheme.onSurfaceVariant) }
                 IconButton(onClick = { onDelete(vehicle) }) { Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error) }
             }
 

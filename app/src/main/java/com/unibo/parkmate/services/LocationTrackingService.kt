@@ -6,14 +6,11 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
-import com.unibo.parkmate.R // Assicurati che punti alle tue risorse
 
 /**
  * [Foreground Service] dedicato all'Active Location Polling.
@@ -39,7 +36,7 @@ class LocationTrackingService : Service() {
             "Active GPS Tracking",
             NotificationManager.IMPORTANCE_LOW
         )
-        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(channel)
     }
 
@@ -60,18 +57,6 @@ class LocationTrackingService : Service() {
             .setMinUpdateIntervalMillis(2000L) // Minimo 2 secondi se l'hardware è veloce
             .setWaitForAccurateLocation(true)
             .build()
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-                // Ogni volta che riceviamo una coordinata qui, l'hardware GPS è SVEGLIO.
-                // Questo "pompa" dati freschi al sistema operativo, costringendo
-                // i Geofence passivi a scattare istantaneamente.
-                val location = locationResult.lastLocation
-                // Puoi stampare un log qui per vedere le coordinate fluire in tempo reale
-                // Log.d("ActiveTracking", "Posizione live: ${location?.latitude}, ${location?.longitude}")
-            }
-        }
 
         // Accendiamo l'antenna GPS in modo vincolato delegando il callback al Main Looper
         fusedLocationClient.requestLocationUpdates(

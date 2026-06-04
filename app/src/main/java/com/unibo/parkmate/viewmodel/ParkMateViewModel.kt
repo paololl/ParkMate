@@ -212,7 +212,7 @@ class ParkMateViewModel(
 
         // Pulizia della barra delle notifiche
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
-        notificationManager.cancel(6000 + vehicle.id)
+        notificationManager.cancel(BASE_ID_HOURLY + vehicle.id)
     }
 
     // ==========================================
