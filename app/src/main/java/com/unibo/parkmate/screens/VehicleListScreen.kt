@@ -277,7 +277,7 @@ fun VehicleCard(
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Column {
-                        Text("PROTOCOL: ${activeSession.parkType.uppercase()}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                        Text("PROTOCOL: ${activeSession.parkType.uppercase()}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             text = "ELAPSED: ${String.format(Locale.US, "%02d:%02d:%02d", elapsedHours, elapsedMinutes, elapsedSeconds)}",
                             style = MaterialTheme.typography.bodyMedium.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace)
@@ -287,7 +287,7 @@ fun VehicleCard(
                     Column(horizontalAlignment = Alignment.End) {
                         if (activeSession.parkType == "hourly") {
                             val currentCost = (elapsedMillis.toDouble() / 3600000.0) * (activeSession.hourlyRate ?: 0.0)
-                            Text("CURRENT COST", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                            Text("CURRENT COST", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(
                                 text = "€ ${String.format(Locale.US, "%.2f", currentCost)}",
                                 style = MaterialTheme.typography.titleSmall.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace), color = MaterialTheme.colorScheme.error
@@ -298,7 +298,7 @@ fun VehicleCard(
                                 val remHours = remainingMillis / 3600000
                                 val remMinutes = (remainingMillis % 3600000) / 60000
                                 val remSeconds = (remainingMillis % 60000) / 1000
-                                Text("EXPIRES IN", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                                Text("EXPIRES IN", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Text(
                                     text = String.format(Locale.US, "%02d:%02d:%02d", remHours, remMinutes, remSeconds),
                                     style = MaterialTheme.typography.titleSmall.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace), color = MaterialTheme.colorScheme.error

@@ -15,6 +15,7 @@ android {
     defaultConfig {
         applicationId = "com.unibo.parkmate"
         minSdk = 26
+        //noinspection OldTargetApi
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -68,7 +69,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.osmdroid.android)
     implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.coil.compose)
     implementation(libs.coil.svg)

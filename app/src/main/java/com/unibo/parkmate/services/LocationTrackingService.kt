@@ -58,6 +58,18 @@ class LocationTrackingService : Service() {
             .setWaitForAccurateLocation(true)
             .build()
 
+        // Inizializziamo il callback PRIMA di passarlo a requestLocationUpdates.
+        // locationCallback è lateinit: senza questa assegnazione, la chiamata
+        // successiva lancia UninitializedPropertyAccessException causando il crash.
+        // Il corpo del callback è intenzionalmente vuoto: il suo scopo non è
+        // elaborare le coordinate, ma tenere il sensore GPS attivo affinché
+        // i trigger Geofence passivi del sistema operativo scattino istantaneamente.
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+            }
+        }
+
         // Accendiamo l'antenna GPS in modo vincolato delegando il callback al Main Looper
         fusedLocationClient.requestLocationUpdates(
             locationRequest,

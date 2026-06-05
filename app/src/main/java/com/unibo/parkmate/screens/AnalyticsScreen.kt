@@ -64,7 +64,7 @@ fun AnalyticsScreen(
 
         pastSessions.forEach { session ->
             val type = session.parkType.trim().lowercase(Locale.getDefault())
-            val cost = session.calculateTotalCost() // <-- CALCOLO PULITO
+            val cost = session.calculateTotalCost()
 
             calendar.timeInMillis = session.startTime
             val key = when (selectedCostFilter) {

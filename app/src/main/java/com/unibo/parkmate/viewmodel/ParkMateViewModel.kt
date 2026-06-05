@@ -49,31 +49,32 @@ class ParkMateViewModel(
     // ==========================================
     // GESTIONE TEMA (CHIARO / SCURO)
     // ==========================================
-    // ThemePreferences legge/scrive il DataStore "parkmate_settings".
-    // Usiamo application come Context in modo da non dipendere da un Context
-    // legato al ciclo di vita di una singola Activity (che potrebbe essere
-    // ricreata per rotazione schermo o cambio configurazione).
+    // ThemePreferences è un wrapper su SharedPreferences: legge e scrive
+    // una singola preferenza booleana in modo sincrono/asincrono.
+    // Usiamo application come Context per evitare memory leak: l'Application
+    // vive per tutta la durata del processo, mai distrutta prima del ViewModel.
     private val themePreferences = ThemePreferences(application)
 
     /**
-     * StateFlow reattivo della preferenza tema. Partenza con false (tema chiaro)
-     * per i nuovi utenti; viene immediatamente sovrascritto dal valore su disco
-     * alla prima emissione del Flow del DataStore.
+     * StateFlow della preferenza tema, esposto in sola lettura alla UI.
      *
-     * WhileSubscribed(5000) mantiene il Flow attivo per 5 secondi dopo che
-     * l'ultimo osservatore si disconnette, evitando riletture costose del DataStore
-     * durante brevi interruzioni (es. rotazione schermo).
+     * Il valore iniziale viene letto da SharedPreferences direttamente alla
+     * creazione del ViewModel. La lettura di un singolo boolean è sincrona
+     * e trascurabile: non richiede coroutine o Flow intermedi.
+     * La UI osserva questo StateFlow e si ricompone automaticamente ad ogni cambio.
      */
-    val isDarkMode: StateFlow<Boolean> = themePreferences.isDarkModeFlow
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+    private val _isDarkMode = MutableStateFlow(themePreferences.isDarkMode())
+    val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
 
     /**
-     * Inverte la preferenza del tema e la persiste su DataStore.
-     * La scrittura avviene su IO dispatcher tramite viewModelScope,
-     * senza mai bloccare il thread principale.
+     * Inverte la preferenza tema, aggiorna lo StateFlow (causa ricomposizione immediata)
+     * e persiste la scelta su disco tramite SharedPreferences.apply() (non bloccante).
+     * Non richiede una coroutine perché .apply() è già asincrono internamente.
      */
-    fun toggleDarkMode() = viewModelScope.launch {
-        themePreferences.setDarkMode(!isDarkMode.value)
+    fun toggleDarkMode() {
+        val newValue = !_isDarkMode.value
+        _isDarkMode.value = newValue
+        themePreferences.setDarkMode(newValue)
     }
     fun insertVehicle(vehicle: Vehicle) = viewModelScope.launch { repository.insertVehicle(vehicle) }
     fun updateVehicle(vehicle: Vehicle) = viewModelScope.launch { repository.updateVehicle(vehicle) }
@@ -283,7 +284,6 @@ class ParkMateViewModel(
         geofencingClient.addGeofences(geofencingRequest, getGeofencePendingIntent(context))
     }
 
-    // Assicurati di avere questo costruttore per il PendingIntent nello stesso file:
     private fun getGeofencePendingIntent(context: Context): android.app.PendingIntent {
         val intent = android.content.Intent(context, com.unibo.parkmate.services.GeofenceBroadcastReceiver::class.java)
         return android.app.PendingIntent.getBroadcast(
