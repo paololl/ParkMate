@@ -55,6 +55,14 @@ fun VehicleListScreen(
     var vehicleName by remember { mutableStateOf("") }
     var vehicleType by remember { mutableStateOf("Car") }
 
+    // Funzione locale che centralizza la chiusura del dialog e il reset del form.
+    fun closeAndResetDialog() {
+        showDialog     = false
+        editingVehicle = null
+        vehicleName    = ""
+        vehicleType    = "Car"
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -120,7 +128,7 @@ fun VehicleListScreen(
 
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { closeAndResetDialog() },
             shape = RectangleShape,
             title = { Text(if (editingVehicle == null) "ADD VEHICLE" else "EDIT VEHICLE") },
             text = {
@@ -190,12 +198,14 @@ fun VehicleListScreen(
                         } else {
                             viewModel.insertVehicle(Vehicle(name = vehicleName, type = vehicleType))
                         }
-                        showDialog = false
+                        closeAndResetDialog()
                     }
                 }) { Text("SAVE", fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog = false }) { Text("CANCEL", color = MaterialTheme.colorScheme.error) }
+                TextButton(onClick = { closeAndResetDialog() }) {
+                    Text("CANCEL", color = MaterialTheme.colorScheme.error)
+                }
             }
         )
     }
