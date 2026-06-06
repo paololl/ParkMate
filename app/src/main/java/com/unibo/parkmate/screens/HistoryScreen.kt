@@ -166,7 +166,7 @@ fun HistoryScreen(
                             val durationMillis = endTime - session.startTime
                             val durationMinutes = (durationMillis % 3600000) / 60000
 
-                            // 1. APPLICAZIONE DEL PRINCIPIO DRY
+                            // APPLICAZIONE DEL PRINCIPIO DRY
                             // Demanda il calcolo al Domain Model garantendo Single Responsibility
                             val type = session.parkType.trim().lowercase(LocalLocale.current.platformLocale)
                             val totalCost = session.calculateTotalCost()

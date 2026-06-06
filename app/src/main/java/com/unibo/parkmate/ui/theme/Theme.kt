@@ -35,12 +35,13 @@ private val ParkMateLightColorScheme = lightColorScheme(
  * Tema principale dell'applicazione.
  *
  * Il parametro [darkTheme] è controllato dall'utente tramite l'interruttore
- * nella sidebar, con la preferenza persistita su DataStore. Viene passato da
+ * nella sidebar, con la preferenza persistita su SharedPreferences. Viene passato da
  * MainActivity che lo raccoglie come State dal ViewModel, garantendo che
- * l'intera albero dei composable si ricomponga immediatamente al cambio.
+ * l'intero albero dei composable si ricomponga immediatamente al cambio.
  *
- * NON usiamo isSystemInDarkTheme() come default perché vogliamo che la scelta
- * dell'utente dentro l'app abbia sempre la precedenza sul tema di sistema.
+ * Il tema scuro è il default per i nuovi utenti (definito in [ThemePreferences]).
+ * NON usiamo isSystemInDarkTheme() perché vogliamo che la scelta esplicita
+ * dell'utente abbia sempre la precedenza sul tema di sistema.
  */
 @Composable
 fun ParkMateTheme(

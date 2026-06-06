@@ -29,10 +29,10 @@ class ThemePreferences(context: Context) {
 
     /**
      * Restituisce la preferenza di tema attualmente salvata.
-     * Il valore di default è FALSE (tema chiaro) per i nuovi utenti
+     * Il valore di default è TRUE (tema scuro) per i nuovi utenti
      * che non hanno ancora espresso una preferenza esplicita.
      */
-    fun isDarkMode(): Boolean = prefs.getBoolean(KEY_DARK_MODE, false)
+    fun isDarkMode(): Boolean = prefs.getBoolean("dark_mode", true)
 
     /**
      * Persiste la scelta del tema su disco.

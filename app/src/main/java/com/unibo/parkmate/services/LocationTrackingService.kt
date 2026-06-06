@@ -58,16 +58,19 @@ class LocationTrackingService : Service() {
             .setWaitForAccurateLocation(true)
             .build()
 
-        // Inizializziamo il callback PRIMA di passarlo a requestLocationUpdates.
-        // locationCallback è lateinit: senza questa assegnazione, la chiamata
-        // successiva lancia UninitializedPropertyAccessException causando il crash.
-        // Il corpo del callback è intenzionalmente vuoto: il suo scopo non è
-        // elaborare le coordinate, ma tenere il sensore GPS attivo affinché
-        // i trigger Geofence passivi del sistema operativo scattino istantaneamente.
+        // MOTIVO DELLA CHIAMATA: requestLocationUpdates() richiede obbligatoriamente un
+        // LocationCallback come parametro — non è possibile avviare il polling GPS senza di esso.
+        // Il corpo del callback è intenzionalmente vuoto perché questo servizio NON elabora
+        // le coordinate: il suo unico scopo è mantenere l'antenna GPS accesa per tutta la durata
+        // delle sessioni di sosta attive.
+        //
+        // CICLO DI VITA: il servizio viene avviato alla prima sosta e fermato all'ultima
+        // (gestito da MainNavigationScreen tramite LaunchedEffect(activeSessions.isEmpty())).
+        // Tenere il GPS attivo durante le sessioni ha anche un effetto collaterale utile:
+        // riduce la latenza dei trigger Geofence del sistema operativo, che rispondono
+        // più lentamente quando il sensore è in modalità risparmio energetico.
         locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-            }
+            override fun onLocationResult(locationResult: LocationResult) { /* intenzionalmente vuoto */ }
         }
 
         // Accendiamo l'antenna GPS in modo vincolato delegando il callback al Main Looper

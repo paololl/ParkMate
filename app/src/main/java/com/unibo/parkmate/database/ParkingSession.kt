@@ -54,7 +54,7 @@ fun ParkingSession.calculateTotalCost(): Double {
 
     return when (parkType.lowercase()) {
         "free" -> 0.0
-        "fixed" -> hourlyRate ?: 0.0   // hourlyRate funge da costo fisso per i ticket Fixed
+        "fixed" -> hourlyRate ?: 0.0
         "hourly" -> {
             val rate = hourlyRate ?: 0.0
             val durationMillis = endTime - startTime

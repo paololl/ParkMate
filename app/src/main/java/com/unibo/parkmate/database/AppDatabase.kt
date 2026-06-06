@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  */
 @Database(
     entities = [Vehicle::class, SavedLocation::class, ParkingSession::class],
-    version = 2, // <-- IMPORTANTE: Abbiamo alzato la versione a 2 per attivare la migrazione
+    version = 2, // <-- Fondamentale per attivare la migrazione
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -35,10 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
         // ed evitando l'uso del metodo distruttivo "fallbackToDestructiveMigration()".
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // In uno scenario reale, qui inseriresti le query SQL per modificare le tabelle.
-                // Esempio fittizio se volessimo aggiungere una colonna:
-                // database.execSQL("ALTER TABLE ParkingSession ADD COLUMN new_feature TEXT")
-
+                // In uno scenario reale, qui si inserirebbe le query SQL per modificare le tabelle.
                 // Lasciandolo vuoto (o con commenti), stiamo dicendo al database che la
                 // versione 2 è strutturalmente pronta, mettendo in sicurezza i dati correnti.
             }
@@ -56,8 +53,6 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "parkmate_database"
                 )
-                    // Abbiamo rimosso fallbackToDestructiveMigration()
-                    // e aggiunto il gestore di migrazioni reale.
                     .addMigrations(MIGRATION_1_2)
                     .build()
                 INSTANCE = instance

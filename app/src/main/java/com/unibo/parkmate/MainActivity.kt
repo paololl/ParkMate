@@ -19,30 +19,32 @@ import com.unibo.parkmate.ui.theme.ParkMateTheme
 
 class MainActivity : ComponentActivity() {
 
-    // Usiamo i singleton già creati da ParkMateApplication per evitare di istanziare
-    // un secondo repository/database ad ogni avvio dell'Activity.
+    // Il ViewModel viene creato usando i singleton già istanziati da ParkMateApplication.
+    // Creare qui un nuovo database o repository produrrebbe una seconda istanza indipendente:
+    // i due oggetti non condividerebbero lo stato in memoria e potrebbero divergere.
     private val viewModel: ParkMateViewModel by viewModels {
         val app = application as ParkMateApplication
         ParkMateViewModelFactory(application, app.repository)
     }
 
-    // REGOLA LIFECYCLE DI ANDROID: registerForActivityResult() DEVE essere chiamato
-    // prima di onStart(), quindi va dichiarato come proprietà della classe (non dentro onCreate).
-    // Se creato dentro un blocco condizionale in onCreate, il sistema non riuscirebbe a
-    // ripristinare correttamente il contratto dopo una ricreazione dell'Activity (es. rotazione
-    // dello schermo mentre il dialog di sistema è aperto), causando un IllegalStateException.
+    // REGOLA ANDROID — registerForActivityResult() deve essere dichiarato come proprietà
+    // della classe, non dentro onCreate(). Android registra il contratto prima di onStart():
+    // se dichiarato dentro un blocco condizionale, il contratto non viene ripristinato
+    // correttamente dopo una ricreazione dell'Activity (es. rotazione schermo con dialog
+    // di sistema aperto), causando un IllegalStateException.
 
-    // Launcher per ACCESS_BACKGROUND_LOCATION — richiesto separatamente dalla
-    // posizione in foreground su Android 10+ (vincolo imposto dal sistema operativo).
+    // ACCESS_BACKGROUND_LOCATION viene richiesto in una chiamata separata rispetto a
+    // ACCESS_FINE_LOCATION perché Android 10+ non accetta i due nella stessa richiesta:
+    // la posizione in background verrebbe silenziosamente ignorata dal sistema.
     private val backgroundLocationLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { /* concesso/negato — il geofencing degrada gracefully se negato */ }
+    ) { /* il geofencing funziona solo in foreground se il permesso viene negato */ }
 
-    // Launcher per POST_NOTIFICATIONS — richiesto separatamente su Android 13+.
-    // Il callback è vuoto perché l'app funziona anche senza notifiche (funzionalità degradata).
+    // POST_NOTIFICATIONS è obbligatorio da Android 13+ per mostrare qualsiasi notifica.
+    // Se negato, i Worker continuano a girare ma l'utente non vede alcun avviso.
     private val notificationsPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { /* concesso/negato — l'app continua a funzionare anche senza permesso notifiche */ }
+    ) { /* l'app funziona in modalità degradata: soste attive ma nessuna notifica */ }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,8 +60,6 @@ class MainActivity : ComponentActivity() {
         notificationManager.createNotificationChannel(channel)
 
         // --- PERMESSO POST_NOTIFICATIONS (Android 13+) ---
-        // Usiamo il launcher dichiarato a livello di classe per garantire la corretta gestione
-        // del risultato anche in caso di ricreazione dell'Activity durante il dialog di sistema.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED
@@ -69,9 +69,8 @@ class MainActivity : ComponentActivity() {
         }
 
         // --- PERMESSO ACCESS_BACKGROUND_LOCATION (Android 10+) ---
-        // Android impone che questo permesso sia richiesto DOPO aver ottenuto ACCESS_FINE_LOCATION
-        // e in una richiesta separata. Tentare di chiederli insieme nella stessa chiamata
-        // causerebbe il silenziamento automatico della richiesta da parte del sistema.
+        // Viene richiesto solo se ACCESS_FINE_LOCATION è già concesso, rispettando
+        // il flusso in due fasi imposto da Android per la posizione in background.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED &&
@@ -82,19 +81,16 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // NOTA: il LocationTrackingService viene ora avviato/fermato reattivamente da
-        // MainNavigationScreen in base alla presenza di sessioni attive.
-        // Non viene più avviato incondizionatamente qui per risparmiare batteria.
+        // Il LocationTrackingService viene avviato e fermato reattivamente da
+        // MainNavigationScreen in base alle sessioni attive, non qui in modo statico.
 
         // --- ROUTING DEGLI INTENT DAL GEOFENCING ---
-        // Gestiamo il deep link proveniente dalle notifiche del BroadcastReceiver.
         handleGeofenceIntent(intent)
 
         setContent {
-            // Raccogliamo isDarkMode come State di Compose: ogni volta che l'utente
-            // preme l'interruttore nel drawer, questo valore cambia e l'intera
-            // ParkMateTheme (e tutto l'albero dei composable sotto di essa) si
-            // ricompone con la nuova palette in modo automatico e istantaneo.
+            // isDarkMode è uno StateFlow osservato come State di Compose.
+            // Ad ogni cambio (es. tap sull'interruttore nel drawer) l'intero albero
+            // dei composable si ricompone automaticamente con la nuova palette colori.
             val isDarkMode by viewModel.isDarkMode.collectAsState()
 
             ParkMateTheme(darkTheme = isDarkMode) {
@@ -109,13 +105,16 @@ class MainActivity : ComponentActivity() {
         handleGeofenceIntent(intent)
     }
 
-    // Traduce l'azione dell'Intent (proveniente dal GeofenceBroadcastReceiver)
-    // in una chiamata al ViewModel oppure in una navigazione verso la schermata di nuova sosta.
+    /**
+     * Traduce l'azione dell'Intent ricevuto dal [GeofenceBroadcastReceiver] in una
+     * operazione sul ViewModel: chiude la sosta se il veicolo esce dall'area ([ACTION_STOP_PARK])
+     * oppure segnala alla UI di aprire il form di nuova sosta ([ACTION_START_PARK]).
+     */
     private fun handleGeofenceIntent(intent: Intent) {
         val action = intent.action
         val zoneName = intent.getStringExtra("LOCATION_NAME") ?: return
         when (action) {
-            "ACTION_STOP_PARK" -> viewModel.stopParkingInZone(zoneName, this)
+            "ACTION_STOP_PARK"  -> viewModel.stopParkingInZone(zoneName, this)
             "ACTION_START_PARK" -> viewModel.setPendingGeofenceZone(zoneName)
         }
     }

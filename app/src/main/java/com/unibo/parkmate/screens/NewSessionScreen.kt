@@ -61,10 +61,10 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
         Configuration.getInstance().userAgentValue = context.packageName
     }
 
-    // --- UI STATE ---
+    // --- STATO DELL'INTERFACCIA ---
     var selectedVehicle by remember { mutableStateOf<Vehicle?>(null) }
 
-    // --- LOCATION STATE ---
+    // --- STATO DELLA POSIZIONE ---
     var locationMode by remember { mutableStateOf("GPS") }
     var selectedSavedLocation by remember { mutableStateOf<SavedLocation?>(null) }
     var latitude by remember { mutableStateOf<Double?>(null) }
@@ -72,13 +72,13 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
     var isFetchingLocation by remember { mutableStateOf(false) }
     var detectedGeofence by remember { mutableStateOf<SavedLocation?>(null) }
 
-    // --- SESSION DETAIL STATE ---
+    // --- STATO DEI DETTAGLI DELLA SESSIONE ---
     var parkType by remember { mutableStateOf("Free") }
     var priceInput by remember { mutableStateOf("") }
     var durationInput by remember { mutableStateOf("") }
     var notesInput by remember { mutableStateOf("") }
 
-    // --- CAMERA STATE (Persistent Storage Pattern) ---
+    // --- STATO DELLA FOTOCAMERA (Pattern di Persistenza) ---
     // Implementazione del FileProvider proxy per garantire persistenza.
     // L'istanza File punta all'External Files Dir anziché alla volatile Cache.
     var photoFile by remember { mutableStateOf<File?>(null) }
@@ -91,7 +91,7 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
         }
     }
 
-    // --- GPS PERMISSION LAUNCHER & ALGORITMO DI PROSSIMITA' SPAZIALE ---
+    // --- LAUNCHER PERMESSO GPS & ALGORITMO DI PROSSIMITÀ SPAZIALE ---
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -105,7 +105,7 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
                     latitude = loc.latitude
                     longitude = loc.longitude
 
-                    // ALGORITMO GEOFENCING E DATA QUALITY:
+                    // ALGORITMO GEOFENCING E QUALITÀ DEI DATI:
                     // Risolve la sovrapposizione tra coordinate GPS e zone salvate usando la trigonometria
                     detectedGeofence = savedLocations.find { location ->
                         val results = FloatArray(1)
@@ -129,28 +129,28 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
         }
     }
 
-    // --- CAMERA LAUNCHER (TakePicture = full-resolution, saved to filesDir) ---
+    // --- LAUNCHER FOTOCAMERA (TakePicture = massima risoluzione, salvata in filesDir) ---
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
-            // The camera wrote the full-resolution photo to photoFile.
-            // Decode a preview bitmap for the thumbnail display in the UI.
+            // La fotocamera ha scritto la foto ad alta risoluzione su photoFile.
+            // Decodifica la bitmap di anteprima per visualizzare il thumbnail nell'interfaccia.
             photoPath = photoFile?.absolutePath
             photoPath?.let { path -> photoBitmap = BitmapFactory.decodeFile(path) }
         }
     }
 
-    // Helper: create a new file in filesDir and launch the camera pointing at it.
+    // Funzione ausiliaria: crea un nuovo file in filesDir e avvia la fotocamera puntandovi.
     fun launchCamera() {
-        // 1. Point to the correct authorized directory
+        // 1. Punta alla directory autorizzata per le immagini esterne dell'app
         val storageDir = context.getExternalFilesDir(android.os.Environment.DIRECTORY_PICTURES)
 
-        // 2. Create the physical file
+        // 2. Crea il file fisico su disco con timestamp per evitare collisioni di nome
         val file = File(storageDir, "park_photo_${System.currentTimeMillis()}.jpg")
         photoFile = file
 
-        // 3. Generate the secure URI
+        // 3. Genera l'URI sicuro tramite FileProvider (obbligatorio da Android 7+)
         val uri: Uri = FileProvider.getUriForFile(
             context,
             "${context.packageName}.provider",
@@ -159,7 +159,7 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
         cameraLauncher.launch(uri)
     }
 
-    // --- CAMERA PERMISSION LAUNCHER ---
+    // --- LAUNCHER PERMESSO FOTOCAMERA ---
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -194,7 +194,7 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
                 return@Scaffold
             }
 
-            // --- 1. VEHICLE SELECTION ---
+            // --- 1. SELEZIONE VEICOLO ---
             Text("TARGET VEHICLE", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -224,7 +224,7 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
 
             HorizontalDivider(color = MaterialTheme.colorScheme.secondary)
 
-            // --- 2. LOCATION SOURCE ---
+            // --- 2. SORGENTE POSIZIONE ---
             Text("LOCATION SOURCE", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf("GPS", "SAVED", "MANUAL").forEach { mode ->
@@ -366,10 +366,10 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
 
             HorizontalDivider(color = MaterialTheme.colorScheme.secondary)
 
-            // --- 3. SESSION RULES ---
+            // --- 3. TIPO DI SOSTA ---
             Text("SESSION RULES", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
-            // Park type chips are always interactive — even when a saved location pre-fills
-            // them, the user may want to override the default for this specific session.
+            // I chip del tipo di sosta sono sempre interattivi: anche quando una SavedLocation
+            // precompila i valori, l'utente può sovrascrivere il tipo per questa sessione specifica.
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf("Free", "Hourly", "Fixed").forEach { type ->
                     FilterChip(
@@ -404,7 +404,7 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
 
             HorizontalDivider(color = MaterialTheme.colorScheme.secondary)
 
-            // --- 4. ATTACHMENTS ---
+            // --- 4. ALLEGATI ---
             Text("ATTACHMENTS", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
             OutlinedTextField(
                 value = notesInput,
@@ -418,7 +418,7 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Button(
                     onClick = {
-                        // Check CAMERA permission before launching the camera app.
+                        // Verifica il permesso CAMERA prima di avviare l'app fotocamera.
                         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
                             == PackageManager.PERMISSION_GRANTED
                         ) {
@@ -447,7 +447,7 @@ fun NewSessionScreen(viewModel: ParkMateViewModel, onNavigateBack: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // --- 5. SUBMIT ---
+            // --- 5. INVIO SESSIONE ---
             val isFormValid = latitude != null && longitude != null &&
                     (parkType == "Free" || priceInput.isNotBlank()) &&
                     (parkType != "Fixed" || durationInput.isNotBlank())

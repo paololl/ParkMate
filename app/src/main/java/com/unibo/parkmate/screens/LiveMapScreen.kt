@@ -1,5 +1,6 @@
 package com.unibo.parkmate.screens
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -47,6 +48,7 @@ import androidx.compose.ui.platform.LocalLocale
  * Dimostra l'utilizzo del paradigma di Interoperabilità tra View legacy (OSMDroid)
  * e Jetpack Compose tramite [AndroidView].
  */
+@SuppressLint("UseKtx")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LiveMapScreen(

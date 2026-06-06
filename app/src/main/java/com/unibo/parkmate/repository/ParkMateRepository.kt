@@ -28,10 +28,6 @@ class ParkMateRepository(private val dao: ParkMateDao) {
      */
     val allVehicles: Flow<List<Vehicle>> = dao.getAllVehicles()
 
-    // L'utilizzo del modificatore 'suspend' indica che queste funzioni (One-Shot Operations)
-    // sono "Main-Safe". Vengono eseguite tramite Coroutine in un thread asincrono (Dispatcher.IO),
-    // garantendo che il thread della UI non venga mai bloccato durante le operazioni di I/O.
-    suspend fun getVehicleById(vehicleId: Int): Vehicle? = dao.getVehicleById(vehicleId)
     suspend fun insertVehicle(vehicle: Vehicle) = dao.insertVehicle(vehicle)
     suspend fun updateVehicle(vehicle: Vehicle) = dao.updateVehicle(vehicle)
     suspend fun deleteVehicle(vehicle: Vehicle) = dao.deleteVehicle(vehicle)
@@ -44,8 +40,6 @@ class ParkMateRepository(private val dao: ParkMateDao) {
     val activeSessions: Flow<List<ParkingSession>> = dao.getActiveSessionsFlow()
     val pastSessions: Flow<List<ParkingSession>> = dao.getPastSessionsFlow()
 
-    // Operazioni transazionali per la gestione asincrona delle soste (es. Worker e Background Services)
-    suspend fun getAllActiveSessions(): List<ParkingSession> = dao.getAllActiveSessions()
     suspend fun getActiveSessionForVehicle(vehicleId: Int): ParkingSession? = dao.getActiveSessionForVehicle(vehicleId)
     suspend fun insertParkingSession(session: ParkingSession) = dao.insertParkingSession(session)
     suspend fun updateParkingSession(session: ParkingSession) = dao.updateParkingSession(session)

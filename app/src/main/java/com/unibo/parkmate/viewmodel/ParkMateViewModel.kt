@@ -208,7 +208,7 @@ class ParkMateViewModel(
         workManager.cancelAllWorkByTag("FIXED_${vehicle.id}")
         workManager.cancelAllWorkByTag("FIXED_WARN_${vehicle.id}")
 
-        // Stop GPS antenna if no sessions are left, saving battery
+        // Ferma l'antenna GPS se non ci sono altre soste attive, risparmiando batteria
         stopTrackingServiceIfIdle(context)
 
         // Pulizia della barra delle notifiche
@@ -217,11 +217,11 @@ class ParkMateViewModel(
     }
 
     // ==========================================
-    // GPS TRACKING SERVICE LIFECYCLE
+    // CICLO DI VITA DEL SERVIZIO GPS
     // ==========================================
     /**
-     * Starts the foreground GPS tracking service. Called when a new parking
-     * session begins so the service runs only while at least one vehicle is parked.
+     * Avvia il servizio GPS in foreground. Viene chiamato all'inizio di ogni nuova sessione
+     * di sosta, garantendo che il servizio sia attivo solo finché almeno un veicolo è parcheggiato.
      */
     fun startTrackingService(context: Context) {
         val intent = android.content.Intent(context, com.unibo.parkmate.services.LocationTrackingService::class.java)
@@ -229,8 +229,8 @@ class ParkMateViewModel(
     }
 
     /**
-     * Stops the foreground GPS service only if no active sessions remain.
-     * Called after ending a session so the antenna is not kept on unnecessarily.
+     * Ferma il servizio GPS in foreground solo se non rimangono sessioni attive.
+     * Chiamato al termine di una sosta per evitare che l'antenna rimanga accesa inutilmente.
      */
     fun stopTrackingServiceIfIdle(context: Context) {
         if (activeSessions.value.isEmpty()) {
@@ -246,7 +246,7 @@ class ParkMateViewModel(
     @SuppressLint("MissingPermission")
     fun registerGeofences(context: Context) = viewModelScope.launch {
         val geofencingClient = LocationServices.getGeofencingClient(context)
-        val locations = repository.getAllSavedLocations() // O la tua lista di locations
+        val locations = repository.getAllSavedLocations()
 
         if (locations.isEmpty()) {
             geofencingClient.removeGeofences(getGeofencePendingIntent(context))

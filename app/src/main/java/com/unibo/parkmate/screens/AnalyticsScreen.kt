@@ -56,7 +56,7 @@ fun AnalyticsScreen(
     var startAnimation by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { startAnimation = true }
 
-    // 2. APPLICAZIONE DEL PRINCIPIO DRY (Aggregazione finanziaria)
+    // APPLICAZIONE DEL PRINCIPIO DRY (Aggregazione finanziaria)
     // Sfrutta il Map-Reduce pattern in RAM per elaborare i costi evitando sub-query SQL
     val costData = remember(pastSessions, selectedCostFilter) {
         val dataMap = mutableMapOf<String, Double>()
