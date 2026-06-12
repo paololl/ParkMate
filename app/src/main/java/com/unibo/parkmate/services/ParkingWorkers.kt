@@ -80,6 +80,10 @@ class OngoingParkingWorker(
 
         val request = OneTimeWorkRequestBuilder<OngoingParkingWorker>()
             .setInitialDelay(5, TimeUnit.MINUTES)
+            // FIX: propaghiamo l'inputData (VEHICLE_ID) alla prossima iterazione della catena.
+            // Senza questa riga, al ciclo successivo VEHICLE_ID tornerebbe -1 e il worker
+            // uscirebbe subito con Result.failure(), interrompendo il refresh ogni 5 minuti.
+            .setInputData(inputData)
             .addTag("HOURLY_${vehicleId}")
             .build()
 

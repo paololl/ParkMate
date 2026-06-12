@@ -137,11 +137,16 @@ class ParkMateViewModel(
 
         // 3. SCHEDULAZIONE BACKGROUND SERVICES
         startTrackingService(context)
-        if (newSession.parkType.trim().lowercase() == "hourly") {
+        val parkType = newSession.parkType.trim().lowercase()
+        // FIX: la notifica ongoing (tempo trascorso, ed eventuale costo) va avviata sia per le
+        // soste a ore sia per quelle gratuite. Prima il ramo gestiva solo "hourly", quindi per
+        // le soste "free" il worker non veniva mai schedulato e la notifica non appariva.
+        if (parkType == "hourly" || parkType == "free") {
             val inputData = Data.Builder().putInt("VEHICLE_ID", vehicle.id).build()
 
-            // Il primo anello si attiva subito, i successivi si sposteranno di 5 in 5 minuti
-            val firstHourlyRequest = OneTimeWorkRequestBuilder<OngoingParkingWorker>()
+            // Il primo anello si attiva subito, i successivi si sposteranno di 5 in 5 minuti.
+            // Vale sia per le soste a ore (mostra tempo + costo) sia per quelle gratuite (solo tempo).
+            val firstOngoingRequest = OneTimeWorkRequestBuilder<OngoingParkingWorker>()
                 .setInputData(inputData)
                 .addTag("HOURLY_${vehicle.id}")
                 .build()
@@ -149,9 +154,9 @@ class ParkMateViewModel(
             workManager.enqueueUniqueWork(
                 "HOURLY_JOB_${vehicle.id}",
                 ExistingWorkPolicy.REPLACE,
-                firstHourlyRequest
+                firstOngoingRequest
             )
-        } else if (newSession.parkType.trim().lowercase() == "fixed" && newSession.expiryTime != null) {
+        } else if (parkType == "fixed" && newSession.expiryTime != null) {
             val delayMillis = newSession.expiryTime - System.currentTimeMillis()
 
             if (delayMillis > 0) {
